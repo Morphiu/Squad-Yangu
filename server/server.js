@@ -1,10 +1,10 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
 import dotenv from 'dotenv';
-import postRoutes from './routes/posts.js';
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import postRoutes from './routes/post.js';
 
 // Load environment variables
 dotenv.config();
@@ -17,9 +17,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/posts', postRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
 
 // Connecting to mongodb atlas
 mongoose.connect(process.env.MONGODB_URI)
