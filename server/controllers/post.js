@@ -66,13 +66,43 @@ export const getPosts = async (req, res) => {
     }
 };
 
+// Get a single post
+export const getPost = async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id)
+            .populate({
+                path: 'user',
+                select: 'username profilePicture'
+            })
+            .populate({
+                path: 'comments.user',
+                select: 'username profilePicture'
+            });
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.json(post);
+    } catch (error) {
+        console.error('Error fetching post:', error);
+        res.status(500).json({ message: 'Error fetching post' });
+    }
+};
+
 // Get user's posts
 export const getUserPosts = async (req, res) => {
     try {
         const posts = await Post.find({ user: req.params.userId })
             .sort({ createdAt: -1 })
-            .populate('user', 'username profilePicture')
-            .populate('comments.user', 'username profilePicture');
+            .populate({
+                path: 'user',
+                select: 'username profilePicture'
+            })
+            .populate({
+                path: 'comments.user',
+                select: 'username profilePicture'
+            });
         res.json(posts);
     } catch (error) {
         console.error('Error fetching user posts:', error);
