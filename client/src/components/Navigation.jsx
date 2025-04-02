@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
     AppBar,
@@ -7,16 +7,21 @@ import {
     Button,
     Box,
     IconButton,
+    Avatar,
     Menu,
     MenuItem,
-    Avatar
+    useTheme,
+    useMediaQuery
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { useAuth } from '../context/AuthContext';
 
 const Navigation = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -27,14 +32,13 @@ const Navigation = () => {
     };
 
     const handleLogout = () => {
-        handleClose();
         logout();
+        handleClose();
         navigate('/login');
     };
 
-    const handleProfile = () => {
-        handleClose();
-        navigate('/profile');
+    const handleCreatePost = () => {
+        navigate('/create-post');
     };
 
     return (
@@ -52,16 +56,23 @@ const Navigation = () => {
                 >
                     Squad Yangu
                 </Typography>
+
                 {user ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <IconButton
+                            color="inherit"
+                            onClick={handleCreatePost}
+                            title="Create Post"
+                        >
+                            <AddIcon />
+                        </IconButton>
                         <IconButton
                             onClick={handleMenu}
                             size="small"
-                            sx={{ ml: 2 }}
                         >
                             <Avatar
-                                alt={user.username}
                                 src={user.profilePicture}
+                                alt={user.username}
                                 sx={{ width: 32, height: 32 }}
                             />
                         </IconButton>
@@ -69,17 +80,17 @@ const Navigation = () => {
                             anchorEl={anchorEl}
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
                         >
-                            <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                            <MenuItem
+                                component={RouterLink}
+                                to="/profile"
+                                onClick={handleClose}
+                            >
+                                Profile
+                            </MenuItem>
+                            <MenuItem onClick={handleLogout}>
+                                Logout
+                            </MenuItem>
                         </Menu>
                     </Box>
                 ) : (
